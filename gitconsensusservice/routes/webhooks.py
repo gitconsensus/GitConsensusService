@@ -26,8 +26,8 @@ def githook():
             abort(403)
 
     # If secret is set use it to validate message.
-    if 'webhook_secret' in app.config:
-        secret = app.config.get['webhook_secret']
+    if 'GITHUB_WEBHOOK_SECRET' in app.config and app.config['GITHUB_WEBHOOK_SECRET']:
+        secret = app.config.get['GITHUB_WEBHOOK_SECRET']
         header_signature = request.headers.get('X-Hub-Signature')
         if header_signature is None:
             logging.warning('Github webhook received without expected authentication signature')

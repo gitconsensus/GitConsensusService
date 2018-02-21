@@ -4,7 +4,9 @@ import os
 import re
 import requests
 import time
+from gitconsensus.repository import Repository
 from gitconsensusservice import app
+import github3
 
 
 def get_jwt():
@@ -40,14 +42,11 @@ def request(url, method='GET'):
     response = requestfunc('https://api.github.com/%s' % (url,), headers=headers)
     response.raise_for_status()
     retobj = response.json()
-    if 'Link' in response.headers:
-        regex = r"\<https://api.github.com/([^>]*)\>; rel=\"([a-z]*)\""
-        groups = re.findall(regex, response.headers['Link'])
-        for group in groups:
-            if group[1] == 'next':
-                nextresults = request(group[1])
-                retobj += nextresults
-                break
+
+    nextpage = get_link_from_response(response)
+    if nextpage:
+        nextresults = request(nextpage)
+        retobj += nextresults
     return retobj
 
 
@@ -73,9 +72,55 @@ def get_installation_token(installation_id):
         expiration = tokens[installation_id]['expires_at']
         testtime = datetime.now() - timedelta(minutes=3)
         exptime = datetime.strptime(expiration, "%Y-%m-%dT%H:%M:%SZ")
-        if exptime < testtime:
+        if exptime > testtime:
             return tokens[installation_id]['token']
 
     url = "installations/%s/access_tokens" % (installation_id,)
     tokens[installation_id] = request(url, 'POST')
     return tokens[installation_id]['token']
+
+
+def get_installation_repositories(installation_id, url=False):
+    if not url:
+        url = 'https://api.github.com/installation/repositories'
+    res = installation_request(installation_id, url)
+    repodata = res.json()
+    repos = [repo['full_name'] for repo in repodata['repositories']]
+    nextpage = get_link_from_response(res)
+    if nextpage:
+        repos += get_installation_repositories(installation_id, nextpage)
+    return repos
+
+
+def installation_request(installation_id, url):
+    client = get_github3_client(installation_id)
+    headers = {'Accept': 'application/vnd.github.machine-man-preview+json'}
+    res = client._get(url, headers=headers)
+    res.raise_for_status()
+    return res
+
+
+def list_prs(installation_id, user, repo):
+    repository = get_repository(installation_id, user, repo).repository
+    prs = repository.iter_pulls(state="open")
+    return [pr.number for pr in prs]
+
+
+def get_repository(install_id, username, repository_name):
+    client = get_github3_client(install_id)
+    return Repository(username, repository_name, client)
+
+
+def get_github3_client(installation_id):
+    token = get_installation_token(installation_id)
+    return github3.login(token=token)
+
+
+def get_link_from_response(response):
+    if 'Link' in response.headers:
+        regex = r"\<https://api.github.com/([^>]*)\>; rel=\"([a-z]*)\""
+        groups = re.findall(regex, response.headers['Link'])
+        for group in groups:
+            if group[1] == 'next':
+                return group[1]
+    return False

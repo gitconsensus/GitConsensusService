@@ -2,7 +2,7 @@ import click
 import yaml
 from gitconsensusservice import app
 from services.githubapp import gh
-from jobs import consensus
+from gitconsensusservice.jobs import consensus
 
 
 @click.group()

@@ -12,7 +12,6 @@ if 'SETTINGS' in os.environ:
             app.config.update(yaml.load(infile.read()))
 
 if 'CELERY_BROKER' in app.config:
-    print(app.config['CELERY_BROKER'])
     celery = Celery('gitconsensus', broker=app.config['CELERY_BROKER'])
 else:
     celery = Celery('gitconsensus')

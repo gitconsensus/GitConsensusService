@@ -1,8 +1,8 @@
 import click
-import re
-from gitconsensusservice.services import github
 import yaml
-from gitconsensus.repository import Repository
+from gitconsensusservice import app
+from services.githubapp import gh
+from jobs import consensus
 
 
 @click.group()
@@ -14,7 +14,7 @@ def cli(ctx):
 
 @cli.command(short_help="List installation IDs available to this application.")
 def installs():
-    installs = github.get_installations()
+    installs = gh.get_installations()
     for install in installs:
         click.echo(install)
 
@@ -22,31 +22,29 @@ def installs():
 @cli.command(short_help="List details about a specific installation.")
 @click.argument('install_id')
 def install(install_id):
-    dump(github.get_installation(install_id))
+    dump(get_githubapp_install(install_id).get_details())
 
 
 @cli.command(short_help="Get an authentication token for the provided installation.")
 @click.argument('install_id')
 def install_token(install_id):
-    token = github.get_installation_token(install_id)
-    click.echo(token)
+    dump(get_githubapp_install(install_id).get_auth_token())
 
 
-@cli.command(short_help="Get an authentication token for the provided installation.")
+@cli.command(short_help="List all repositories for an installation.")
 @click.argument('install_id')
 def install_repos(install_id):
-    token = github.get_installation_repositories(install_id)
-    dump(token)
+    dump(get_githubapp_install(install_id).get_repositories())
 
 
 @cli.command(short_help="List details about the current application.")
 def application():
-    dump(github.get_app())
+    dump(gh.get_app())
 
 
 @cli.command(short_help="Get JWT Authentication Token for this application.")
 def jwt():
-    click.echo(github.get_jwt())
+    click.echo(gh.get_jwt())
 
 
 @cli.command(short_help="List all open pull requests for the specific install and repository.")
@@ -54,10 +52,10 @@ def jwt():
 @click.argument('username')
 @click.argument('repository_name')
 def prs(install_id, username, repository_name):
-    dump(github.list_prs(install_id, username, repository_name))
+    dump(get_githubapp_install(install_id).list_prs(username, repository_name))
 
 
-@cli.command(short_help="Display detailed information about a specific pull request")
+@cli.command(short_help="Display detailed information about a specific pull request.")
 @click.argument('install_id')
 @click.argument('username')
 @click.argument('repository_name')
@@ -77,9 +75,18 @@ def pr(install_id, username, repository_name, pull_request):
     click.echo("Last Update:  %s" % (request.hoursSinceLastUpdate(),))
 
 
+@cli.command(short_help="Process pull requests for all installations.")
+@click.option('--synchronous/--no-synchronous', default=True)
+def process(synchronous):
+    consensus.process_installs(synchronous)
+
+
+def get_githubapp_install(install_id):
+    return gh.get_installation(install_id)
+
+
 def get_repository(install_id, username, repository_name):
-    client = github.get_github3_client(install_id)
-    return Repository(username, repository_name, client)
+    return get_githubapp_install(install_id).get_repository(username, repository_name)
 
 
 def dump(obj):

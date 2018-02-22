@@ -2,3 +2,4 @@ DEBUG: false
 GITHUB_PRIVATE_KEY: '/absolute/path/to/private-key.pem'
 GITHUB_APP_ID: 0
 GITHUB_WEBHOOK_SECRET:
+CELERY_BROKER: 'pyamqp://guest@localhost//'

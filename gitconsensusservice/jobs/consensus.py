@@ -1,5 +1,5 @@
 from gitconsensusservice import app, celery
-from services.githubapp import gh
+from gitconsensusservice.services.githubapp import gh
 
 
 @celery.task

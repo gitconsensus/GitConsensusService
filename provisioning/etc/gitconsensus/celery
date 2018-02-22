@@ -13,9 +13,7 @@ CELERY_BIN="/opt/gitconsensus/venv/bin/celery"
 
 # App instance to use
 # comment out this line if you don't use an app
-CELERY_APP="gitconsensusservice.celery"
-# or fully qualified:
-#CELERY_APP="proj.tasks:app"
+CELERY_APP="gitconsensusservice.worker:celery"
 
 # How to call manage.py
 CELERYD_MULTI="multi"

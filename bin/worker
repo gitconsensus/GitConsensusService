@@ -10,4 +10,4 @@ fi
 
 source "$DIR/envvar"
 
-celery -A gitconsensusservice.celery worker --loglevel=info
+celery -A gitconsensusservice.worker:celery worker --loglevel=info

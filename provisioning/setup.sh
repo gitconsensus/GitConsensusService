@@ -15,6 +15,12 @@ cp $DIR/etc/gitconsensus/celery /etc/gitconsensus/celery
 
 adduser --gecos "" --disabled-login gitconsensus
 
+mkdir /var/run/gitconsensus
+chown gitconsensus:gitconsensus /var/run/gitconsensus
+mkdir /var/log/gitconsensus
+chown gitconsensus:gitconsensus /var/log/gitconsensus
+
 echo "d /var/run/celery 0755 celery celery -" >> /etc/tmpfiles.d/celery.conf
 echo "d /var/log/celery 0755 celery celery - " >> /etc/tmpfiles.d/celery.conf
 
+systemctl daemon-reload

@@ -14,11 +14,11 @@ install:
 
 dependencies:
 	if [ ! -d $(ROOT_DIR)/venv ]; then python3 -m venv $(ROOT_DIR)/venv; fi
-	source $(ROOT_DIR)/venv/bin/activate; yes w | pip install -e .
+	source $(ROOT_DIR)/venv/bin/activate; python -m pip install wheel; yes w | python -m pip install -e .
 
 application:
 	if [ ! -d $(ROOT_DIR)/venv ]; then python3 -m venv $(ROOT_DIR)/venv; fi
-	source $(ROOT_DIR)/venv/bin/activate; yes w | pip install -r requirements.txt
+	source $(ROOT_DIR)/venv/bin/activate; python -m pip install wheel; yes w | python -m pip install -r requirements.txt
 
 clean:
 	rm -rf $(ROOT_DIR)/venv;

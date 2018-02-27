@@ -76,9 +76,13 @@ def pr(install_id, username, repository_name, pull_request):
 
 
 @cli.command(short_help="Process pull requests for all installations.")
+@click.argument('installation', required=False)
 @click.option('--synchronous/--no-synchronous', default=True)
-def process(synchronous):
-    consensus.process_installs(synchronous)
+def process(synchronous, installation):
+    if not installation:
+        consensus.process_installs(synchronous)
+    else:
+        consensus.process_installation(installation, synchronous)
 
 
 def get_githubapp_install(install_id):

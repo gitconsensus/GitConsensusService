@@ -48,7 +48,7 @@ setup(
     'click>=5.0,<6.0',
     'cryptography>=2.1.4,<3',
     'Flask>=0.12.2',
-    'gitconsensus>=0.5.0,<0.6'
+    'gitconsensus>=0.6.0,<0.7'
     'github3.py>=0.9.6,<0.10',
     'github3apps.py>=0.1.0',
     'pyjwt>=1.5.3,<2',

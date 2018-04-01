@@ -6,7 +6,7 @@ chardet==3.0.4
 click==5.1
 cryptography==2.1.4
 Flask==0.12.2
-gitconsensus==0.6.0
+gitconsensus==0.6.1
 github3.py==0.9.6
 github3apps.py==0.1.0
 idna==2.6

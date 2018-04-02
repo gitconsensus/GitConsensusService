@@ -37,9 +37,43 @@ def install_repos(install_id):
     dump(get_githubapp_install(install_id).get_repositories())
 
 
+@cli.command(short_help="List all available repositories with gitconsensus enabled.")
+def list_repos():
+    installs = gh.get_installations()
+    for install_id in installs:
+        click.echo('Install %s:' % install_id)
+        installation = get_githubapp_install(install_id)
+        repos = installation.get_repositories()
+        for repo in repos:
+            user, repo = repo.split('/')
+            repository = installation.get_repository(user, repo)
+            if repository.rules:
+                click.echo('\t%s/%s' % (user, repo))
+
+
 @cli.command(short_help="List details about the current application.")
 def application():
     dump(gh.get_app())
+
+
+@cli.command(short_help="List all labels for the specific install and repository.")
+@click.argument('install_id')
+@click.argument('username')
+@click.argument('repository_name')
+def labels(install_id, username, repository_name):
+    gc_repo = get_repository(install_id, username, repository_name)
+    labels = gc_repo.get_labels()
+    dump(labels)
+
+
+
+@cli.command(short_help="List all labels for the specific install and repository.")
+@click.argument('install_id')
+@click.argument('username')
+@click.argument('repository_name')
+def process_repository_labels(install_id, username, repository_name):
+    consensus.process_repository_labels(install_id, username, repository_name)
+
 
 
 @cli.command(short_help="Get JWT Authentication Token for this application.")
@@ -47,7 +81,7 @@ def jwt():
     click.echo(gh.get_jwt())
 
 
-@cli.command(short_help="List all open pull requests for the specific install and repository.")
+@cli.command(short_help="List all open PRs for the specific install and repository.")
 @click.argument('install_id')
 @click.argument('username')
 @click.argument('repository_name')

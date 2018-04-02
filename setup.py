@@ -50,7 +50,7 @@ setup(
     'Flask>=0.12.2',
     'gitconsensus>=0.7,<0.8'
     'github3.py>=1,<2',
-    'github3apps.py>=0.1.2',
+    'github3apps.py>=0.1.3,<0.2',
     'pyjwt>=1.5.3,<2',
     'PyYAML>=3.12,<3.13',
     'requests>=2.18.0,<2.19',

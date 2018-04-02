@@ -1,7 +1,7 @@
 import click
 import yaml
 from gitconsensusservice import app
-from services.githubapp import gh
+from gitconsensusservice.services.githubapp import gh
 from gitconsensusservice.jobs import consensus
 
 

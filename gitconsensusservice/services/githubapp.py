@@ -13,5 +13,4 @@ class GithubConsensusAppInstall(GithubAppInstall):
         client = self.get_github3_client()
         return Repository(username, repository_name, client)
 
-
 gh = GithubConsensusApp(app.config['GITHUB_APP_ID'], app.config['GITHUB_PRIVATE_KEY'])

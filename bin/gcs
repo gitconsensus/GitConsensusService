@@ -9,4 +9,4 @@ else
 fi
 
 source "$DIR/envvar"
-python $DIR/../gitconsensusservice/cli.py "$@"
+python -m gitconsensusservice.cli "$@"

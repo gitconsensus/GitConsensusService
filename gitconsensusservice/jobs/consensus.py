@@ -34,12 +34,48 @@ def process_repository(installation_id, user, repo, synchronous=False):
         print('%s/%s does not have any consensus rules.' % (user, repo))
         return
 
+    # Add labels
+    if synchronous:
+        process_repository_labels(installation_id, user, repo)
+    else:
+        process_repository_labels.delay(installation_id, user, repo)
+
     prs = installation.get_pr_numbers(user, repo)
     for pr in prs:
         if synchronous:
             process_pull_request(installation_id, user, repo, pr)
         else:
             process_pull_request.delay(installation_id, user, repo, pr)
+
+
+color_notice = 'fbf904'
+color_positive = '0052cc'
+color_negative = 'ee0701'
+label_colors = {
+    'License Change': color_notice,
+    'Consensus Change': color_notice,
+    'Has Quorum': color_positive,
+    'Needs Votes': color_negative,
+    'Passing': color_positive,
+    'Failing': color_negative,
+    'gc-merged': color_positive,
+    'gc-closed': color_negative,
+}
+
+
+@celery.task
+def process_repository_labels(installation_id, user, repo):
+    print('Checking %s/%s\'s labels as installation %s' % (user, repo, installation_id))
+    installation = gh.get_installation(installation_id)
+    repository = installation.get_repository(user, repo)
+    labels = repository.get_labels()
+    for label, color in label_colors.items():
+        if label not in labels:
+            print('Creating label %s with color #%s' % (label, color))
+            repository.repository.create_label(label, color)
+        elif color != labels[label].color:
+            print('Reseting label %s to color #%s' % (label, color))
+            labels[label].update(label, color)
 
 
 @celery.task

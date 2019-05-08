@@ -8,7 +8,11 @@ def process_installs(synchronous=False):
     installs = gh.get_installations()
     for install in installs:
         if synchronous:
-            process_installation(install, True)
+            try:
+                process_installation(install, True)
+            except Exception as error:
+                print('Failed to process install %s due to error:' % install)
+                print(error)
         else:
             process_installation.delay(install)
 
@@ -20,7 +24,12 @@ def process_installation(installation_id, synchronous=False):
     repositories = installation.get_repositories()
     for repository in repositories:
         user, repo = repository.split('/')
-        process_repository(installation_id, user, repo, True)
+        try:
+            process_repository(installation_id, user, repo, True)
+        except Exception as error:
+            print('Failed to process %s/%s due to error:' % (user, repo))
+            print(error)
+
 
 
 @celery.task

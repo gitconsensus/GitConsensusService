@@ -9,7 +9,6 @@ click==6.7
 cryptography==2.3.1
 Flask==1.0.2
 gitconsensus==0.7.2
-gitconsensusservice==0.1.0
 github3.py==1.1.0
 github3apps.py==0.1.3
 idna==2.6

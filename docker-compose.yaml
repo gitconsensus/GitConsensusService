@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  worker:
+    build:
+      context: .
+      dockerfile: dockerfile
+    volumes:
+      - ./gitconsensusservice:/app/gitconsensusservice
+      - ./github_app.private-key.pem:/app/github_app.private-key.pem
+    environment:
+      - 'CELERY_BROKER=pyamqp://guest@rabbitmq//'
+      - 'DEBUG=true'
+      - 'GITHUB_APP_ID=9231'
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq

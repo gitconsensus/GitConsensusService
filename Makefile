@@ -10,7 +10,11 @@ fresh: clean dependencies
 
 fulluninstall: uninstall clean
 
-install:
+testenv: clean_testenv
+	docker-compose up --build
+
+clean_testenv:
+	docker-compose down
 
 dependencies:
 	if [ ! -d $(ROOT_DIR)/venv ]; then python3 -m venv $(ROOT_DIR)/venv; fi

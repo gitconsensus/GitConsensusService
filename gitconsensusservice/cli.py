@@ -41,14 +41,17 @@ def install_repos(install_id):
 def list_repos():
     installs = gh.get_installations()
     for install_id in installs:
-        click.echo('Install %s:' % install_id)
-        installation = get_githubapp_install(install_id)
-        repos = installation.get_repositories()
-        for repo in repos:
-            user, repo = repo.split('/')
-            repository = installation.get_repository(user, repo)
-            if repository.rules:
-                click.echo('\t%s/%s' % (user, repo))
+        try:
+            click.echo('Install %s:' % install_id)
+            installation = get_githubapp_install(install_id)
+            repos = installation.get_repositories()
+            for repo in repos:
+                user, repo = repo.split('/')
+                repository = installation.get_repository(user, repo)
+                if repository.rules:
+                    click.echo('\t%s/%s' % (user, repo))
+        except:
+            click.echo('Unable to process install %s' % install_id)
 
 
 @cli.command(short_help="List details about the current application.")

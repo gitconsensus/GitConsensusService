@@ -12,7 +12,13 @@ if 'SETTINGS' in os.environ:
             app.config.update(yaml.load(infile.read()))
 
 
-SETTINGS = ['DEBUG', 'GITHUB_PRIVATE_KEY', 'GITHUB_APP_ID', 'GITHUB_WEBHOOK_SECRET', 'CELERY_BROKER']
+SETTINGS = [
+    'DEBUG',
+    'GITHUB_PRIVATE_KEY',
+    'GITHUB_APP_ID',
+    'GITHUB_WEBHOOK_SECRET',
+    'CELERY_BROKER',
+    'PROCESS_INSTALLS_INTERVAL']
 for setting in SETTINGS:
     if setting in os.environ:
         app.config[setting] = os.environ[setting]

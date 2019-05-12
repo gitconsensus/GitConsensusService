@@ -12,6 +12,7 @@ services:
       - 'CELERY_BROKER=pyamqp://guest@rabbitmq//'
       - 'DEBUG=true'
       - 'GITHUB_APP_ID=9231'
+      - 'PROCESS_INSTALLS_INTERVAL=30'
     depends_on:
       - rabbitmq
 

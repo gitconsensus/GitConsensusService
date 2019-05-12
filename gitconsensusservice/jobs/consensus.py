@@ -25,7 +25,10 @@ def process_installation(installation_id, synchronous=False):
     for repository in repositories:
         user, repo = repository.split('/')
         try:
-            process_repository(installation_id, user, repo, True)
+            if synchronous:
+                process_repository(installation_id, user, repo, True)
+            else:
+                process_repository.delay(installation_id, user, repo, False)
         except Exception as error:
             print('Failed to process %s/%s due to error:' % (user, repo))
             print(error)

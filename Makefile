@@ -16,6 +16,12 @@ testenv: clean_testenv
 clean_testenv:
 	docker-compose down
 
+build_image:
+	docker build -f $(ROOT_DIR)/dockerfile -t tedivm/gitconsensus_service:latest .
+
+publish_image: build_image
+	docker push tedivm/gitconsensus_service:latest
+
 dependencies:
 	if [ ! -d $(ROOT_DIR)/venv ]; then python3 -m venv $(ROOT_DIR)/venv; fi
 	source $(ROOT_DIR)/venv/bin/activate; python -m pip install wheel; yes w | python -m pip install -e .

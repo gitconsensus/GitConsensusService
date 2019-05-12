@@ -14,7 +14,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build -t $IMAGE_NAME:latest .
+            docker build -t $IMAGE_NAME:latest . | cat
 
   publish-latest:
     executor: docker-publisher
@@ -29,7 +29,7 @@ jobs:
           name: Publish Docker Image to Docker Hub
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push $IMAGE_NAME:latest
+            docker push $IMAGE_NAME:latest | cat
 
 workflows:
   version: 2

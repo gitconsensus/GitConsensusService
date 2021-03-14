@@ -95,6 +95,11 @@ def process_pull_request(installation_id, user, repo, pull_request):
     print('Processing %s/%s #%s as installation %s' % (user, repo, pull_request, installation_id))
     installation = gh.get_installation(installation_id)
     repository = installation.get_repository(user, repo)
+    if not repository.rules:
+        print('%s/%s does not have any consensus rules.' % (user, repo))
+        return
+
+    # It is possible that this will 404 here if an issue was passed in as a pull request.
     request = repository.getPullRequest(pull_request)
     if request.validate():
         print("Merging PR#%s" % (request.number,))
@@ -104,3 +109,12 @@ def process_pull_request(installation_id, user, repo, pull_request):
         request.close()
     else:
         request.addInfoLabels()
+
+
+@celery.task
+def remove_pull_request_labels(installation_id, user, repo, pull_request):
+    print('Processing %s/%s #%s as installation %s' % (user, repo, pull_request, installation_id))
+    installation = gh.get_installation(installation_id)
+    repository = installation.get_repository(user, repo)
+    request = repository.getPullRequest(pull_request)
+    request.cleanInfoLabels()
